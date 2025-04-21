@@ -104,7 +104,7 @@
             position: fixed;
             top: 90px;
             right: 30px;
-            width: 800px; /* Doubled from 400px to 800px */
+            width: 800px;
             max-width: 90%;
             max-height: calc(100vh - 160px);
             background: var(--panel-bg);
@@ -112,13 +112,16 @@
             -webkit-backdrop-filter: blur(16px);
             border-radius: 12px;
             overflow: hidden;
-            display: flex;
+            display: none; /* Hidden by default */
             flex-direction: column;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            
             z-index: 5;
+        }
+
+        .form-panel.active {
+            display: flex; /* Show when active */
         }
 
         .form-panel:hover {
@@ -185,16 +188,16 @@
             filter: invert(100%) hue-rotate(180deg) brightness(1.2) contrast(0.8);
         }
 
-        /* Toggle button for form visibility on mobile */
+        /* Toggle button for form visibility */
         .toggle-form {
             position: fixed;
-            bottom: 80px;
+            top: 10px; /* Below header with safe margin */
             right: 20px;
             width: 50px;
             height: 50px;
             background: var(--panel-bg);
             border-radius: 50%;
-            display: none;
+            display: flex;
             justify-content: center;
             align-items: center;
             border: 1px solid var(--neon-magenta);
@@ -204,6 +207,16 @@
             z-index: 15;
             cursor: pointer;
             overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .toggle-form {
+                top: 900px;
+                bottom: 20px;
+                right: auto;
+                left: 20px;
+            }
         }
 
         /* Footer */
@@ -391,17 +404,43 @@
         © 2025 - <span>Earth Guardians</span> - All rights reserved
     </div>
 
-    <!-- JavaScript for mobile toggle -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const formPanel = document.getElementById('formPanel');
-            const toggleForm = document.getElementById('toggleForm');
-            
-            toggleForm.addEventListener('click', function() {
-                formPanel.classList.toggle('active');
-                toggleForm.textContent = formPanel.classList.contains('active') ? '×' : '+';
+        <!-- JavaScript for toggle behavior -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const formPanel = document.getElementById('formPanel');
+                const toggleForm = document.getElementById('toggleForm');
+                
+                // Start with form hidden
+                formPanel.classList.remove('active');
+                
+                // Toggle form visibility
+                toggleForm.addEventListener('click', function() {
+                    formPanel.classList.toggle('active');
+                    toggleForm.textContent = formPanel.classList.contains('active') ? '×' : '+';
+                });
+
+                // Handle responsive button position
+                function updateButtonPosition() {
+                    const width = window.innerWidth;
+                    if (width <= 768) {
+                        // Mobile - bottom left
+                        toggleForm.style.top = 'auto';
+                        toggleForm.style.right = 'auto';
+                        toggleForm.style.bottom = '20px';
+                        toggleForm.style.left = '20px';
+                    } else {
+                        // Desktop - top right
+                        toggleForm.style.top = '20px';
+                        toggleForm.style.right = '20px';
+                        toggleForm.style.bottom = 'auto';
+                        toggleForm.style.left = 'auto';
+                    }
+                }
+
+                // Initial setup
+                updateButtonPosition();
+                window.addEventListener('resize', updateButtonPosition);
             });
-        });
-    </script>
+        </script>
 </body>
 </html>
